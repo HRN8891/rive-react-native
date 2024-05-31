@@ -78,6 +78,8 @@ type RiveProps = {
   url?: string;
   style?: StyleProp<ViewStyle>;
   testID?: string;
+  onPress?: () => void;
+  disableDefaultTouchHandling?: boolean;
 };
 
 const VIEW_NAME = 'RiveReactNativeView';
@@ -99,6 +101,9 @@ type Props = {
   stateMachineName?: string;
   autoplay?: boolean;
   children?: React.ReactNode;
+  onPress?: () => void;
+  disableDefaultTouchHandling?: boolean;
+
 } & XOR<{ resourceName: string }, { url: string }>;
 
 export const RiveViewManager = requireNativeComponent<RiveProps>(VIEW_NAME);
@@ -124,6 +129,8 @@ const RiveContainer = React.forwardRef<RiveRef, Props>(
       animationName,
       stateMachineName,
       testID,
+      onPress,
+      disableDefaultTouchHandling = false,
     },
     ref
   ) => {
@@ -364,11 +371,14 @@ const RiveContainer = React.forwardRef<RiveRef, Props>(
         <View style={styles.children}>{children}</View>
         <TouchableWithoutFeedback
           onPressIn={(event: GestureResponderEvent) =>
+            !disableDefaultTouchHandling &&
             touchBegan(event.nativeEvent.locationX, event.nativeEvent.locationY)
           }
           onPressOut={(event: GestureResponderEvent) =>
+            !disableDefaultTouchHandling && 
             touchEnded(event.nativeEvent.locationX, event.nativeEvent.locationY)
           }
+          onPress={onPress}
         >
           <RiveViewManager
             ref={riveRef}
