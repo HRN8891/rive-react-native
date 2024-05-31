@@ -315,6 +315,15 @@ const RiveContainer = React.forwardRef<RiveRef, Props>(
       []
     );
 
+    const onPressCallback = useCallback(
+      () => {
+       onPress && onPress()
+      },
+      []
+    );
+
+
+
     const touchEnded = useCallback<RiveRef[ViewManagerMethod.touchEnded]>(
       (x: number, y: number) => {
         if (!isNaN(x) && !isNaN(y)) {
@@ -352,6 +361,7 @@ const RiveContainer = React.forwardRef<RiveRef, Props>(
         touchBegan,
         touchEnded,
         setTextRunValue,
+        onPressCallback
       }),
       [
         play,
@@ -363,6 +373,7 @@ const RiveContainer = React.forwardRef<RiveRef, Props>(
         touchBegan,
         touchEnded,
         setTextRunValue,
+        onPressCallback
       ]
     );
 
@@ -370,15 +381,14 @@ const RiveContainer = React.forwardRef<RiveRef, Props>(
       <View style={[styles.container, style]} ref={ref as any} testID={testID}>
         <View style={styles.children}>{children}</View>
         <TouchableWithoutFeedback
-          onPressIn={(event: GestureResponderEvent) =>
+          onPressIn={(event: GestureResponderEvent)  => {
             !disableDefaultTouchHandling &&
-            touchBegan(event.nativeEvent.locationX, event.nativeEvent.locationY)
-          }
+             touchBegan(event.nativeEvent.locationX, event.nativeEvent.locationY)
+             onPressCallback()
+          }}
           onPressOut={(event: GestureResponderEvent) =>
-            !disableDefaultTouchHandling && 
-            touchEnded(event.nativeEvent.locationX, event.nativeEvent.locationY)
+            !disableDefaultTouchHandling && touchEnded(event.nativeEvent.locationX, event.nativeEvent.locationY)
           }
-          onPress={onPress}
         >
           <RiveViewManager
             ref={riveRef}
